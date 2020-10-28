@@ -38,7 +38,7 @@ func (c *SCChaincode) Invoke(stub shim.ChaincodeStubInterface) peer.Response {
 		return c.callNFT(stub, args)
 	}
 
-	if strings.ToLower(function) == "store" {
+	if strings.ToLower(function) == "callstore" {
 		return c.callFiscoStore(stub, args)
 	}
 
@@ -60,7 +60,7 @@ func (c *SCChaincode) callNFT(stub shim.ChaincodeStubInterface, args []string) p
 		return shim.Error("the args cannot be empty")
 	}
 
-	input := &Input{}
+	input := &NftInput{}
 	err := json.Unmarshal([]byte(args[0]), input)
 	if err != nil {
 		return shim.Error("the args[0] Unmarshal failed")

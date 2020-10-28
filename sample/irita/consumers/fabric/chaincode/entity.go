@@ -2,7 +2,7 @@ package chaincode
 
 //nft input and out
 
-type Input struct {
+type NftInput struct {
 	ABIEncoded   string `json:"abi_encoded,omitempty"`
 	To           string `json:"to"`
 	AmountToMint string `json:"amount_to_mint"`
@@ -11,7 +11,7 @@ type Input struct {
 	IsForSale    bool   `json:"is_for_sale"`
 }
 
-type Output struct {
+type NftOutput struct {
 	NftID string `json:"nft_id"`
 }
 

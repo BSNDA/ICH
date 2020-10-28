@@ -1,12 +1,12 @@
-#### 基于Fabric 框架的跨链应用合约
+# 基于Fabric 框架的跨链应用合约
 
-##### 应用合约开发说明
+## 应用合约开发说明
 1. 开发准备：
 需要首先获取BSN跨链消费合约的帮助包 目前只有go语言版本，后续会增加其他版本
 ```
-	cd $GOPATH
-    mkdir -p src/github.com/BSNDA && cd src/github.com/BSNDA
-    git clone https://github.com/BSNDA/ICH.git
+cd $GOPATH
+mkdir -p src/github.com/BSNDA && cd src/github.com/BSNDA
+git clone https://github.com/BSNDA/ICH.git
 ```
 
 
@@ -14,7 +14,7 @@
 创建Fabric链码对象、以及Invoke方法后，引入包
 ```
 import (
-	"github.com/BSNDA/ICH/sample/irita/consumers/fabric/crosschaincode"
+  "github.com/BSNDA/ICH/sample/irita/consumers/fabric/crosschaincode"
 )
 ```
 在invoke方法中直接调用 `crosschaincode.CallService`方法，该方法的参数如下:

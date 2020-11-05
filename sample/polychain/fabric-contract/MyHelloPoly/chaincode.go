@@ -17,7 +17,7 @@ func setLogger(logInfo ...interface{}) {
 }
 
 /**
- * @Author AndyCao
+ * @Author AC
  * @Date 2020-11-4 18:27
  * @Description  合约初始化
  * @Param
@@ -30,7 +30,7 @@ func (t *HelloPoly) Init(stub shim.ChaincodeStubInterface) peer.Response {
 }
 
 /**
- * @Author AndyCao
+ * @Author AC
  * @Date 2020-11-4 18:27
  * @Description  合约调用
  * @Param
@@ -55,7 +55,7 @@ func (t *HelloPoly) Invoke(stub shim.ChaincodeStubInterface) peer.Response {
 }
 
 /**
- * @Author AndyCao
+ * @Author AC
  * @Date 2020-11-4 18:27
  * @Description 此方法用于对其它目标链进行跨链调用（此方法可自行定义）
  * @Param
@@ -76,7 +76,7 @@ func (t *HelloPoly) say(stub shim.ChaincodeStubInterface, args []string) peer.Re
 	invokeArgs := make([][]byte, 6)
 	// 设置跨链管理合约被调用的方法
 	invokeArgs[0] = []byte("crossChain")
-	// 设置目标链在Poly网络中所对应的链应
+	// 设置目标链在Poly网络中所对应的链ID（国内网所对应的链ID是8，国际网所对应的链是9）
 	invokeArgs[1] = []byte(args[0])
 	// 设置目标链应用合约地址，此参数不需要添加0x,如目标链应用合约地址为0x69d0ba0866ee3d9abd19b06ad8ac6f49023e19b8,则此参数传69d0ba0866ee3d9abd19b06ad8ac6f49023e19b8
 	invokeArgs[2] = []byte(args[1])
@@ -100,7 +100,7 @@ func (t *HelloPoly) say(stub shim.ChaincodeStubInterface, args []string) peer.Re
 }
 
 /**
- * @Author AndyCao
+ * @Author AC
  * @Date 2020-11-4 18:28
  * @Description 此方法用于对其它目标链进行跨链调用（此方法可自行定义）
  * @Param
@@ -122,7 +122,7 @@ func (t *HelloPoly) hear(stub shim.ChaincodeStubInterface, args []string) peer.R
 }
 
 /**
- * @Author AndyCao
+ * @Author AC
  * @Date 2020-11-4 18:39
  * @Description  获取数据
  * @Param
@@ -145,7 +145,7 @@ func (t *HelloPoly) getValue(stub shim.ChaincodeStubInterface, args []string) pe
 }
 
 /**
- * @Author AndyCao
+ * @Author AC
  * @Date 2020-11-4 18:40
  * @Description  获取应用合约地址信息
  * @Param

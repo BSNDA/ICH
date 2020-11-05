@@ -78,12 +78,14 @@ func (t *HelloPoly) say(stub shim.ChaincodeStubInterface, args []string) peer.Re
 	invokeArgs[0] = []byte("crossChain")
 	// 设置目标链在Poly网络中所对应的链ID（国内网所对应的链ID是8，国际网所对应的链是9）
 	invokeArgs[1] = []byte(args[0])
-	// 设置目标链应用合约地址，此参数不需要添加0x,如目标链应用合约地址为0x69d0ba0866ee3d9abd19b06ad8ac6f49023e19b8,则此参数传69d0ba0866ee3d9abd19b06ad8ac6f49023e19b8
-	invokeArgs[2] = []byte(args[1])
+	// 设置目标链应用合约地址，注：
+	// 1、目标链为fabric，则为应用合约的名称，如：mycc，目标链为fisco/eth/neo，则为应用合约地址，如：11...，前面不要加0x
+	// 2、传给跨链管理合约参数必须为hex.EncodeToString将bytes转换成16进制字符串，再转换成byte数组
+	invokeArgs[2] = []byte(hex.EncodeToString([]byte(args[1])))
 	// 目标链应用合约方法
 	invokeArgs[3] = []byte("hear")
-	// 目标链应用合约所需要传递的跨链信息
-	invokeArgs[4] = []byte(args[2])
+	// 目标链应用合约所需要传递的跨链信息（注：传给跨链管理合约参数必须为hex.EncodeToString将bytes转换成16进制字符串，再转换成byte数组）
+	invokeArgs[4] = []byte(hex.EncodeToString([]byte(args[2])))
 	// 应用合约的名字
 	invokeArgs[5] = []byte(args[3])
 	// 调用跨链管理合约
@@ -110,12 +112,12 @@ func (t *HelloPoly) hear(stub shim.ChaincodeStubInterface, args []string) peer.R
 	setLogger("The hear method is called......")
 	defer setLogger("End called hear method......")
 	// 参数检查
-	if len(args) != 2 {
+	if len(args) != 1 {
 		return shim.Error("Parameter error！！！")
 	}
 
 	// 保存源链所提交的跨链信息
-	if err:=stub.PutState(args[0],[]byte(args[1]));err!=nil{
+	if err:=stub.PutState("FABRIC_CROSS_CHAIN",[]byte(args[0]));err!=nil{
 		return shim.Error(fmt.Sprintf("Failed to save data: %v", err))
 	}
 	return shim.Success([]byte("SUCCESS"))

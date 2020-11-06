@@ -79,7 +79,11 @@ func (t *HelloPoly) say(stub shim.ChaincodeStubInterface, args []string) peer.Re
 	// 设置目标链应用合约地址，注：
 	// 1、目标链为fabric，则为应用合约的名称，如：mycc，目标链为fisco/eth/neo，则为应用合约地址，如：11...，前面不要加0x
 	// 2、传给跨链管理合约参数必须为hex.EncodeToString将bytes转换成16进制字符串，再转换成byte数组
-	invokeArgs[2] = []byte(hex.EncodeToString([]byte(args[1])))
+	if args[0]=="8"||args[0]=="9"{
+		invokeArgs[2] = []byte(hex.EncodeToString([]byte(args[1])))
+	}else{
+		invokeArgs[2] = []byte(args[1])
+	}
 	// 目标链应用合约方法
 	invokeArgs[3] = []byte("hear")
 	// 目标链应用合约所需要传递的跨链信息（注：传给跨链管理合约参数必须为hex.EncodeToString将bytes转换成16进制字符串，再转换成byte数组）

@@ -46,10 +46,10 @@ func (t *HelloPoly) Invoke(stub shim.ChaincodeStubInterface) peer.Response {
 	case "getValue":
 		return t.getValue(stub, args)
 	default:
-		setLogger("Unavailable method！")
+		setLogger("Unavailable method!")
 		break
 	}
-	return shim.Error("Unavailable request！")
+	return shim.Error("Unavailable request!")
 }
 
 /**
@@ -64,7 +64,7 @@ func (t *HelloPoly) say(stub shim.ChaincodeStubInterface, args []string) peer.Re
 	defer setLogger("End called say method......")
 	// Check configurations
 	if len(args) != 4 {
-		return shim.Error("Parameter error！！！")
+		return shim.Error("Parameter error!!!")
 	}
 	// Save data
 	if err:=stub.PutState(args[1],[]byte(args[2]));err!=nil{
@@ -99,7 +99,7 @@ func (t *HelloPoly) say(stub shim.ChaincodeStubInterface, args []string) peer.Re
 	if err := stub.SetEvent("from_ccm", resp.Payload); err != nil {
 		return shim.Error(fmt.Sprintf("Event setting failed: %v", err))
 	}
-	setLogger("Successfully call the cross-chain management contract for cross-chain: (target chain ID: %d, target chain contract address: %x, cross-chain message: %s)", args[0], args[1], args[2])
+	setLogger(fmt.Sprintf("Successfully call the cross-chain management contract for cross-chain: (target chain ID: %d, target chain contract address: %x, cross-chain message: %s)", args[0], args[1], args[2]))
 	return shim.Success(nil)
 }
 
@@ -115,7 +115,7 @@ func (t *HelloPoly) hear(stub shim.ChaincodeStubInterface, args []string) peer.R
 	defer setLogger("End called hear method......")
 	// Check parameters
 	if len(args) != 1 {
-		return shim.Error("Parameter error！！！")
+		return shim.Error("Parameter error!!!")
 	}
 
 	// Save the cross-chain information committed by the source chain
@@ -137,7 +137,7 @@ func (t *HelloPoly) getValue(stub shim.ChaincodeStubInterface, args []string) pe
 	defer setLogger("End getValue hear method......")
 	// Check parameters
 	if len(args) != 1 {
-		return shim.Error("Parameter error！！！")
+		return shim.Error("Parameter error!!!")
 	}
 
 	// Get data

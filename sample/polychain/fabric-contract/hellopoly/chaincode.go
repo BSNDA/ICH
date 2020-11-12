@@ -99,7 +99,7 @@ func (t *HelloPoly) say(stub shim.ChaincodeStubInterface, args []string) peer.Re
 	if err := stub.SetEvent("from_ccm", resp.Payload); err != nil {
 		return shim.Error(fmt.Sprintf("Event setting failed: %v", err))
 	}
-	setLogger("Successfully call the cross-chain management contract for cross-chain: (target chain ID: %d, target chain contract address: %x, cross-chain message: %s)", args[1], args[1], args[2])
+	setLogger("Successfully call the cross-chain management contract for cross-chain: (target chain ID: %d, target chain contract address: %x, cross-chain message: %s)", args[0], args[1], args[2])
 	return shim.Success(nil)
 }
 

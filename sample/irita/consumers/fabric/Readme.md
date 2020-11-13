@@ -37,12 +37,15 @@ type Input struct {
     IsForSale    bool   `json:"is_for_sale"`
 }
 ```
+> `nft`服务为部署在ETH Ropsten测试网的MintBase合约，合约地址为：`0x80f2a29e861a1888603b6bbd54453ee995c808ad`
+
 在FISCO BCOS 服务中`input`结构如下
 ```
 type BcosInput struct {
     Value string `json:"value"`
 }
 ```
+> `bcos-store`服务为部署在BSN测试网的 fisco-bcos 合约，参考[Store.sol](https://github.com/BSNDA/ICH/blob/main/sample/irita/services/fiscobcos/store/Store.sol),合约地址为：`0xc5a44ba642f4609e51a96d04d211b86f094a4051`
 
 调用成功，将返回唯一的请求ID，请注意保存该值，在回调方法中可以根据该值判断跨链结果。
 
@@ -93,3 +96,8 @@ govendor init
 govendor add -tree github.com/BSNDA/ICH/sample/irita/consumers/fabric/crosschaincode
 ```
 最后将项目以及`vendor`目录压缩，在BSN门户上传合约包，进行部署。
+
+打包部署注意事项：
+> 在`main.go`所在的目录压缩文件，仅支持`zip`格式,例如本实例中的`fabric.zip`
+> `main`函数路径为相对于`src`的路径，本实例中为`github.com/BSNDA/ICH/sample/irita/consumers/fabric`
+> 本实例中由于`crosschaincode`非外部包，所以没有使用`govendor`

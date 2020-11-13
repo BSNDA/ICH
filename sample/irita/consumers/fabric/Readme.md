@@ -98,6 +98,6 @@ govendor add -tree github.com/BSNDA/ICH/sample/irita/consumers/fabric/crosschain
 最后将项目以及`vendor`目录压缩，在BSN门户上传合约包，进行部署。
 
 打包部署注意事项：
-> 在`main.go`所在的目录压缩文件，仅支持`zip`格式,例如本实例中的`fabric.zip`
-> `main`函数路径为相对于`src`的路径，本实例中为`github.com/BSNDA/ICH/sample/irita/consumers/fabric`
-> 本实例中由于`crosschaincode`非外部包，所以没有使用`govendor`
+> 在`main.go`所在的目录压缩文件，仅支持`zip`格式,例如本实例中的[fabric.zip](https://github.com/BSNDA/ICH/blob/main/sample/irita/consumers/fabric/fabric.zip)，文件可重新命名  
+> `main`函数路径为相对于`src`的路径，本实例中为`github.com/BSNDA/ICH/sample/irita/consumers/fabric`  
+> 本实例中由于`crosschaincode`非外部包，所以没有使用`govendor`  

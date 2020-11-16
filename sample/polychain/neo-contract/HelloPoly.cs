@@ -10,7 +10,7 @@ namespace HelloPoly
 {
     public class HelloPoly : SmartContract
     {
-		// NEO在Poly网络中所对应的链ID
+	// NEO在Poly网络中所对应的链ID
         private static readonly BigInteger neoChainID = 4;
 
         // 应用合约哈希默认值

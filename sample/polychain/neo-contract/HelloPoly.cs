@@ -45,7 +45,7 @@ namespace HelloPoly
                 byte[] callingScriptHash = ExecutionEngine.CallingScriptHash;
                 if (method == "setManagerProxy") return SetManagerProxy((byte[])args[0]);
                 if (method == "bindProxyHash") return BindProxyHash((BigInteger)args[0], (byte[])args[1]);
-                if (method == "say") return Say((BigInteger)args[0], (byte[])args[1], (byte[])args[2]);
+                if (method == "say") return Say((BigInteger)args[0], (byte[])args[1]);
                 if (method == "hear") return Hear((byte[])args[0], (byte[])args[1], (BigInteger)args[2], callingScriptHash);
             }
             HelloPoly.Notify(false, "[HelloPoly]-invalid method-".AsByteArray().Concat(method.AsByteArray()).AsString());
@@ -102,7 +102,7 @@ namespace HelloPoly
             // 跨链调用
             bool success = (bool)((DynCall)ccmcScriptHash.ToDelegate())("CrossChain", new object[] { toChainId, toProxyHash, "hear", msg });
             
-			HelloPoly.Notify(success, "[HelloPoly]-Say: Failed to call CCMC.");
+	    HelloPoly.Notify(success, "[HelloPoly]-Say: Failed to call CCMC.");
 			
             // 事件通知
             HelloPoly.SayEvent(toChainId, toProxyHash);

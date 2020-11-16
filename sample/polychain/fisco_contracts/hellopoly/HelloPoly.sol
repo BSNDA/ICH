@@ -27,7 +27,6 @@ contract HelloPoly {
 
 
     /**
-     * @author kuan
      * @dev 设置管理合约
      * @param _managerProxyContract 本框架管理合约的地址
      * @return 
@@ -39,7 +38,6 @@ contract HelloPoly {
 
 
     /**
-     * @author kuan
      * @dev 绑定需要调用的应用合约
      * @param _toChainId 被调用的合约框架chainId
      * @param _targetProxyHash 被调用的应用合约地址
@@ -52,25 +50,27 @@ contract HelloPoly {
     }
 
     /**
-     * @author kuan
      * @dev 通过调用say方法实现跨链调用
      * @param _toChainId 被调用的合约框架chainId
      * @param _somethingWoW 跨链传递的参数
      * @return bool
      **/
     function say(uint64 _toChainId, bytes _somethingWoW) public returns (bool){
-
+        //获取跨链管理合约接口
         IEthCrossChainManagerProxy eccmp = IEthCrossChainManagerProxy(managerProxyContract);
+        //获取跨链管理合约地址
         address eccmAddr = eccmp.getEthCrossChainManager();
+        //获取跨链管理合约对象
         IEthCrossChainManager eccm = IEthCrossChainManager(eccmAddr);
+        //获取目标链应用合约地址
         bytes memory toProxyHash = proxyHashMap[_toChainId];
+        //调用跨链
         require(eccm.crossChain(_toChainId, toProxyHash, "hear", _somethingWoW), "CrossChainManager crossChain executed error!");
         emit Say(_toChainId, toProxyHash, _somethingWoW);
         return true;
     }
 
     /**
-     * @author kuan
      * @param _somethingWoW 跨链传递的参数
      * @param _fromContractAddr 被调用的应用合约地址
      * @param _toChainId 被调用的合约框架chainId

@@ -71,9 +71,16 @@ func (t *HelloPoly) say(stub shim.ChaincodeStubInterface, args []string) peer.Re
 		return shim.Error(fmt.Sprintf("Failed to save data: %v", err))
 	}
 	// Build cross-chain management contract calling parameters
+	// Parameter 1: Chain ID corresponding to the target chain
+	// Parameter 2: the name or address of the target chain application contract 
+	// (Note: the contract name of fabric must be converted into a hexadecimal string, such as hex.EncodeToString ([]byte("")), 
+	// the contract address of FISCO and Eth needs to remove the prefix of 0x, and the contract address of Neo needs to remove the prefix of 0x, 
+	// and the string is small terminated)
+	// Parameter 3: define method corresponding to target chain application contract
+	// Parameter 4: Cross chain information sent to the target chain
 	ccArgs := []string{"crossChain",
 		args[0],
-		hex.EncodeToString([]byte(args[1])),
+		args[1],
 		args[2],
 		hex.EncodeToString([]byte(args[3]))}
 	// Calling cross-chain management contract

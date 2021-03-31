@@ -39,12 +39,12 @@ func (t *HelloPoly) Init(stub shim.ChaincodeStubInterface) peer.Response {
 func (t *HelloPoly) Invoke(stub shim.ChaincodeStubInterface) peer.Response {
 	function, args := stub.GetFunctionAndParameters()
 	switch function {
-	case "say":
-		return t.say(stub, args)
-	case "hear":
-		return t.hear(stub, args)
-	case "getValue":
-		return t.getValue(stub, args)
+	case "send":
+		return t.send(stub, args)
+	case "set":
+		return t.set(stub, args)
+	case "get":
+		return t.get(stub, args)
 	default:
 		setLogger("Unavailable method!")
 		break
@@ -59,9 +59,9 @@ func (t *HelloPoly) Invoke(stub shim.ChaincodeStubInterface) peer.Response {
  * @Param
  * @Return
  **/
-func (t *HelloPoly) say(stub shim.ChaincodeStubInterface, args []string) peer.Response {
-	setLogger("The say method is called......")
-	defer setLogger("End called say method......")
+func (t *HelloPoly) send(stub shim.ChaincodeStubInterface, args []string) peer.Response {
+	setLogger("The send method is called......")
+	defer setLogger("End called send method......")
 	// Check configurations
 	if len(args) != 4 {
 		return shim.Error("Parameter error!!!")
@@ -103,9 +103,9 @@ func (t *HelloPoly) say(stub shim.ChaincodeStubInterface, args []string) peer.Re
  * @Param
  * @Return
  **/
-func (t *HelloPoly) hear(stub shim.ChaincodeStubInterface, args []string) peer.Response {
-	setLogger("The hear method is called......")
-	defer setLogger("End called hear method......")
+func (t *HelloPoly) set(stub shim.ChaincodeStubInterface, args []string) peer.Response {
+	setLogger("The set method is called......")
+	defer setLogger("End called set method......")
 	// Check parameters
 	if len(args) != 1 {
 		return shim.Error("Parameter error!!!")
@@ -125,9 +125,9 @@ func (t *HelloPoly) hear(stub shim.ChaincodeStubInterface, args []string) peer.R
  * @Param
  * @Return
  **/
-func (t *HelloPoly) getValue(stub shim.ChaincodeStubInterface, args []string) peer.Response {
-	setLogger("The getValue method is called......")
-	defer setLogger("End getValue hear method......")
+func (t *HelloPoly) get(stub shim.ChaincodeStubInterface, args []string) peer.Response {
+	setLogger("The get method is called......")
+	defer setLogger("End get hear method......")
 	// Check parameters
 	if len(args) != 1 {
 		return shim.Error("Parameter error!!!")

@@ -18,7 +18,9 @@ contract HelloPoly {
     //存储需要调用的其他跨链合约的合约地址
     mapping(uint64 => bytes) public proxyHashMap;
     //负责接收其他跨链合约say的结果
-    bytes  public hearSomeThing;
+    bytes public hearSomeThing;
+    //负责记录跨链合约say的参数
+    bytes public saySomeThing;
 
     event SetManagerProxyEvent(address manager);
     event BindProxyEvent(uint64 toChainId, bytes targetProxyHash);
@@ -66,6 +68,7 @@ contract HelloPoly {
         bytes memory toProxyHash = proxyHashMap[_toChainId];
         //调用跨链
         require(eccm.crossChain(_toChainId, toProxyHash, "hear", _somethingWoW), "CrossChainManager crossChain executed error!");
+        saySomeThing = _somethingWoW;
         emit Say(_toChainId, toProxyHash, _somethingWoW);
         return true;
     }

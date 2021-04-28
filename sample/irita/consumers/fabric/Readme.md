@@ -17,35 +17,43 @@ import (
   "github.com/BSNDA/ICH/sample/irita/consumers/fabric/crosschaincode"
 )
 ```
-在invoke方法中直接调用 `crosschaincode.CallService`方法，该方法的参数如下:
+在invoke方法中直接调用 `crosschaincode.CallCrossService`方法，该方法的参数如下:
 * stub : shim.ChaincodeStubInterface
-* serviceName : 调用的跨链服务名称，ETH的为 `nft` ，FISCO BCOS 为`bcos-store`
+* serviceName : 调用的跨链服务名称，通用联盟链跨链为 `cross_service`
+* crossChaincode : 跨链管理合约地址  
 * input : 跨链服务的输入对象，
 * callbackCC ：回调的合约名称
 * callbackFcn ：回调的合约方法名称
 * timeout : 超时时间
 
-其中 input 参数根据跨链服务不同，传入的类型不同
-在ETH 的服务中`input`结构如下
+其中 input 参数根据跨链调用的目标链类型不同，传入的类型不同
+在以`fabric`为目标链的服务中`input`结构为`crosschaincode.FabricInput`
 ```
-type Input struct {
-    ABIEncoded   string `json:"abi_encoded,omitempty"`
-    To           string `json:"to"`
-    AmountToMint string `json:"amount_to_mint"`
-    MetaID       string `json:"meta_id"`
-    SetPrice     string `json:"set_price"`
-    IsForSale    bool   `json:"is_for_sale"`
+type FabricInput struct {
+	ChainId     uint64   `json:"chainId"`
+	ChainCode   string   `json:"chainCode"`
+	FunType     string   `json:"funType"`
+	Args        []string `json:"args"`
 }
 ```
-> `nft`服务为部署在ETH Ropsten测试网的MintBase合约，合约地址为：`0x80f2a29e861a1888603b6bbd54453ee995c808ad`
+> `ChainId` 为调用的目标链的链ID，可以在BSN的应用详情页找到  
+> `ChainCode` 为调用的目标链的合约名称  
+> `FunType` 为调用的目标链的方法类型，可选为`query`和`invoke`  
+> `Args` 为调用的目标链的参数，其中第一个参数为调用的合约方法名，其他为参数  
 
-在FISCO BCOS 服务中`input`结构如下
+在以`FISCO-BCOS`为目标链的服务中`input`结构为`crosschaincode.FiscoBcosInput`
 ```
-type BcosInput struct {
-    Value string `json:"value"`
+type FiscoBcosInput struct {
+	OptType         string `json:"optType"`
+	ChainId         uint64  `json:"chainId"`
+	ContractAddress string `json:"contractAddress"`
+	CallData        string `json:"callData"`
 }
 ```
-> `bcos-store`服务为部署在BSN测试网的 fisco-bcos 合约，参考[Store.sol](https://github.com/BSNDA/ICH/blob/main/sample/irita/services/fiscobcos/store/Store.sol),合约地址为：`0xc5a44ba642f4609e51a96d04d211b86f094a4051`
+> `OptType`为调用的合约的方法类型，其中`constant`为`call`,`非constant`为`tx`  
+> `ChainId` 为调用的目标链的链ID，可以在BSN的应用详情页找到  
+> `ContractAddress` 为调用的目标合约的合约地址  
+> `CallData` 为使用调用的目标合约的合约ABI、合约方法名、合约参数、序列化后的数据的哈希字符串，不包含`0x`,可以参考BSN网关go语言SDK的 [ParesData](https://github.com/BSNDA/PCNGateway-Go-SDK/blob/6d97d885f96597f4b35040df17fdca1fbcda07ab/pkg/core/trans/fiscobcos/trans.go#L24)  
 
 调用成功，将返回唯一的请求ID，请注意保存该值，在回调方法中可以根据该值判断跨链结果。
 
@@ -71,18 +79,31 @@ type InputData struct {
 ```
 其中 `Body` 为对应服务的输出对象，
 
-在ETH 的服务中`output`结构如下
+在以`Fabric`为目标链的调用中 `output`结构如下
 ```
-type Output struct {
-    NftID string `json:"nft_id"`
+type FabricOutput struct {
+	TxValidationCode int32  `json:"txValidationCode"`
+	ChaincodeStatus  int32  `json:"chaincodeStatus"`
+	TxId             string `json:"txId"`
+	Payload          string `json:"payload"`
 }
 ```
-在FISCO BCOS 服务中`output`结构如下
+> `TxValidationCode` 为交易的状态  
+> `ChaincodeStatus`为合约的执行状态  
+> `TxId`为交易ID  
+> `Payload` 为合约的返回结果的哈希字符串  
+
+在以`FISCO-BCOS`为目标链的调用中`output`结构如下
 ```
-type BcosOutput struct {
-    Key string `json:"key"`
+type FiscoBcosOutput struct {
+	Result string `json:"result,omitempty"`
+	Status bool   `json:"status,omitempty"`
+	TxHash string `json:"tx_hash,omitempty"`
 }
 ```
+> `Result` 为合约的返回结果，调用的方法为`call`时，有值  
+> `Status` 合约的执行结果状态  
+> `TxHash` 为合约的执行交易哈希，调用的方法为`tx`时，有值  
 
 4. 链码打包
 由于该链码引用了外部的包，需要在打包时将外部包同时打包，可以使用`govendor`打包

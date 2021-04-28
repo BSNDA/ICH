@@ -23,3 +23,32 @@ type ServiceResponse struct {
 	Output      string `json:"output,omitempty"`
 	IcRequestId string `json:"icRequestID,omitempty"`
 }
+
+//bsn IRITA跨链中,标链为 fabric的标准输入结构
+type FabricInput struct {
+	ChainId   uint64   `json:"chainId"`
+	ChainCode string   `json:"chainCode"`
+	FunType   string   `json:"funType"`
+	Args      []string `json:"args"`
+}
+
+//bsn IRITA跨链中,目标链为 FISCO-BCOS的标准输入结构
+type FiscoBcosInput struct {
+	OptType         string `json:"optType"`
+	ChainID         uint64 `json:"chainId"`
+	ContractAddress string `json:"contractAddress"`
+	CallData        string `json:"callData"`
+}
+
+type FabricOutput struct {
+	TxValidationCode int32  `json:"txValidationCode"`
+	ChaincodeStatus  int32  `json:"chaincodeStatus"`
+	TxId             string `json:"txId"`
+	Payload          string `json:"payload"`
+}
+
+type FiscoBcosOutput struct {
+	Result string `json:"result,omitempty"`
+	Status bool   `json:"status,omitempty"`
+	TxHash string `json:"tx_hash,omitempty"`
+}

@@ -42,6 +42,10 @@ func (c *SCChaincode) Invoke(stub shim.ChaincodeStubInterface) peer.Response {
 		return c.callFiscoStore(stub, args)
 	}
 
+	if strings.ToLower(function) == "callchainlink" {
+		return c.callChainlink(stub, args)
+	}
+
 	if strings.ToLower(function) == "callback" {
 		return c.callback(stub, args)
 	}
@@ -50,7 +54,49 @@ func (c *SCChaincode) Invoke(stub shim.ChaincodeStubInterface) peer.Response {
 		return c.query(stub, args)
 	}
 
+	if strings.ToLower(function) == "callfabric" {
+		return c.callFabric(stub, args)
+	}
+
+	if strings.ToLower(function) == "callfisco" {
+		return c.callFisco(stub, args)
+	}
+
 	return shim.Error("function not found")
+}
+
+func (c *SCChaincode) callChainlink(stub shim.ChaincodeStubInterface, args []string) peer.Response {
+	if len(args) == 0 {
+		return shim.Error("the args cannot be empty")
+	}
+	serviceName := args[0]
+	cb_cc := ""
+	cb_fcn := "callback"
+
+	if len(args) >= 2 {
+		cb_cc = args[1]
+	}
+	if len(args) >= 3 {
+		cb_fcn = args[2]
+	}
+	fmt.Println(cb_cc, cb_fcn)
+	reqId, err := crosschaincode.CallService(stub, serviceName, new(struct{}), cb_cc, cb_fcn, 100)
+	if err != nil {
+		return shim.Error("Chainlink has failed ," + err.Error())
+	}
+	fmt.Println(reqId)
+
+	cd := &CrossData{
+		Id:    reqId,
+		Input: args[0],
+	}
+
+	cdb, _ := json.Marshal(cd)
+	if err := stub.PutState(crossKey(reqId), cdb); err != nil {
+		return shim.Error(fmt.Sprintf("put data info error；%s", err))
+	}
+
+	return shim.Success([]byte(reqId))
 }
 
 func (c *SCChaincode) callNFT(stub shim.ChaincodeStubInterface, args []string) peer.Response {

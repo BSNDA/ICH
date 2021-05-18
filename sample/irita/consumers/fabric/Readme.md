@@ -52,8 +52,8 @@ type FiscoBcosInput struct {
 ```
 > `OptType`为调用的合约的方法类型，其中`constant`为`call`,`非constant`为`tx`  
 > `ChainId` 为调用的目标链的链ID，可以在BSN的应用详情页找到  
-> `ContractAddress` 为调用的目标合约的合约地址  
-> `CallData` 为使用调用的目标合约的合约ABI、合约方法名、合约参数、序列化后的数据的哈希字符串，不包含`0x`,可以参考BSN网关go语言SDK的 [ParesData](https://github.com/BSNDA/PCNGateway-Go-SDK/blob/6d97d885f96597f4b35040df17fdca1fbcda07ab/pkg/core/trans/fiscobcos/trans.go#L24)  
+> `ContractAddress` 为调用的目标合约的合约地址,不包含`0x`  
+> `CallData` 为使用调用的目标合约的合约ABI、合约方法名、合约参数、序列化后的数据的哈希字符串，可以参考BSN网关go语言SDK的 [ParesData](https://github.com/BSNDA/PCNGateway-Go-SDK/blob/6d97d885f96597f4b35040df17fdca1fbcda07ab/pkg/core/trans/fiscobcos/trans.go#L24)  
 
 调用成功，将返回唯一的请求ID，请注意保存该值，在回调方法中可以根据该值判断跨链结果。
 

@@ -5,22 +5,20 @@ import "./IEthCrossChainManagerProxy.sol";
 
 /**
  * @author kuan
- * @title Poly跨链合约
- * @dev 调用流程（1、2步骤都是一次性，绑定之后可以多次调用say）：
- *      1. 调用setManagerProxy绑定管理合约
- *      2. 调用bindProxyHash绑定对方框架的chainId和应用合约
- *      3. 调用say进行跨链操作
+ * @title Poly cross-chain contract
+ * @dev Calling process (steps 1 and 2 are one-time calling. After binding, you can repeatedly call say method):
+ *      1. call setManagerProxy to bind the management contract
+ *      2. call bindProxyHash to bind the target framework's chainId and application contract
+ *      3. call say method for cross-chain operation
  */
 contract HelloPoly {
 
-    //存储本框架管理合约的地址
+    //Store the address of the source chain's management contract
     address public managerProxyContract;
-    //存储需要调用的其他跨链合约的合约地址
+    //Store the address of target chain's cross-chain contracts
     mapping(uint64 => bytes) public proxyHashMap;
-    //负责接收其他跨链合约say的结果
-    bytes public hearSomeThing;
-    //负责记录跨链合约say的参数
-    bytes public saySomeThing;
+    //Responsible for receiving the results of other cross-chain contracts calling say method
+    bytes  public hearSomeThing;
 
     event SetManagerProxyEvent(address manager);
     event BindProxyEvent(uint64 toChainId, bytes targetProxyHash);
@@ -29,8 +27,8 @@ contract HelloPoly {
 
 
     /**
-     * @dev 设置管理合约
-     * @param _managerProxyContract 本框架管理合约的地址
+     * @dev Set up the management contract
+     * @param _managerProxyContract The address of the source chain's management contract
      * @return 
      **/
     function setManagerProxy(address _managerProxyContract) public {
@@ -40,9 +38,9 @@ contract HelloPoly {
 
 
     /**
-     * @dev 绑定需要调用的应用合约
-     * @param _toChainId 被调用的合约框架chainId
-     * @param _targetProxyHash 被调用的应用合约地址
+     * @dev Bind the application contract to be called
+     * @param _toChainId The target chain's chainID
+     * @param _targetProxyHash The target chain's application address
      * @return bool
      **/
     function bindProxyHash(uint64 _toChainId, bytes memory _targetProxyHash) public returns (bool) {
@@ -52,31 +50,31 @@ contract HelloPoly {
     }
 
     /**
-     * @dev 通过调用say方法实现跨链调用
-     * @param _toChainId 被调用的合约框架chainId
-     * @param _somethingWoW 跨链传递的参数
+     * @dev Enable the cross-chain invocation by calling the say method
+     * @param _toChainId The target chain's chainID
+     * @param _functionName The target chain's function name in the contract
+     * @param _somethingWoW Parameters passed across the chain
      * @return bool
      **/
-    function say(uint64 _toChainId, bytes _somethingWoW) public returns (bool){
-        //获取跨链管理合约接口
+    function say(uint64 _toChainId, string memory _functionName, string memory _somethingWoW) public returns (bool){
+        //Get the cross-chain management contract interface
         IEthCrossChainManagerProxy eccmp = IEthCrossChainManagerProxy(managerProxyContract);
-        //获取跨链管理合约地址
+        //Get the address of the cross-chain management contract
         address eccmAddr = eccmp.getEthCrossChainManager();
-        //获取跨链管理合约对象
+        //Get the cross-chain manager contract object
         IEthCrossChainManager eccm = IEthCrossChainManager(eccmAddr);
-        //获取目标链应用合约地址
+        //Get the address of the target chain application contract
         bytes memory toProxyHash = proxyHashMap[_toChainId];
-        //调用跨链
-        require(eccm.crossChain(_toChainId, toProxyHash, "hear", _somethingWoW), "CrossChainManager crossChain executed error!");
-        saySomeThing = _somethingWoW;
-        emit Say(_toChainId, toProxyHash, _somethingWoW);
+        //Call the cross-chain method
+        require(eccm.crossChain(_toChainId, toProxyHash, bytes(_functionName), bytes(_somethingWoW)),"EthCrossChainManager crossChain executed error!");
+        emit Say(_toChainId,toProxyHash, bytes(_somethingWoW));
         return true;
     }
 
     /**
-     * @param _somethingWoW 跨链传递的参数
-     * @param _fromContractAddr 被调用的应用合约地址
-     * @param _toChainId 被调用的合约框架chainId
+     * @param _somethingWoW Parameters passed across the chain
+     * @param _fromContractAddr The target chain's application address
+     * @param _toChainId The target chain's chainID
      * @return bool
      **/
     function hear(bytes _somethingWoW, bytes _fromContractAddr, uint64 _toChainId) public returns (bool){

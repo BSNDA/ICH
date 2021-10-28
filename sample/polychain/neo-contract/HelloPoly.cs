@@ -10,30 +10,30 @@ namespace HelloPoly
 {
     public class HelloPoly : SmartContract
     {
-	// NEO在Poly网络中所对应的链ID
+	// The chain ID corresponding to the NEO framework in the Poly network
         private static readonly BigInteger neoChainID = 4;
 
-        // 应用合约哈希默认值
+        // Default hash value of the application contract 
         private static readonly byte[] ProxyHashPrefix = new byte[] { 0x01, 0x01 };
 
-        // 动态回调
+        //  Dynamic callbacks
         delegate object DynCall(string method, object[] args);
 
-        // 设置管理合约通知事件
+        // Set management contract notification event
         public static event Action<byte[]> SetManagerProxyEvent;
 
-        // 设置应用合约通知事件
+        // Set application contract notification event
         public static event Action<BigInteger, byte[]> BindProxyHashEvent;
 
-        // 设置Say通知事件
+        // Set Say menthod notification event
         public static event Action<BigInteger, byte[]> SayEvent;
 
-        // 设置Hear通知事件
+        // Set Hear method notification event
         public static event Action<BigInteger, byte[], byte[]> HearEvent;
 
 
         /// <summary>
-        /// 函数主入口
+        /// Main function entrance
         /// </summary>
         /// <param name="method"></param>
         /// <param name="args"></param>
@@ -45,17 +45,18 @@ namespace HelloPoly
                 byte[] callingScriptHash = ExecutionEngine.CallingScriptHash;
                 if (method == "setManagerProxy") return SetManagerProxy((byte[])args[0]);
                 if (method == "bindProxyHash") return BindProxyHash((BigInteger)args[0], (byte[])args[1]);
-                if (method == "say") return Say((BigInteger)args[0], (byte[])args[1]);
+                if (method == "say") return Say((BigInteger)args[0], (string)args[1], (byte[])args[2]);
                 if (method == "hear") return Hear((byte[])args[0], (byte[])args[1], (BigInteger)args[2], callingScriptHash);
             }
             HelloPoly.Notify(false, "[HelloPoly]-invalid method-".AsByteArray().Concat(method.AsByteArray()).AsString());
             return false;
         }
 
+
         /// <summary>
-        /// 设置管理合约地址
+        /// Set up the management contract address
         /// </summary>
-        /// <param name="ccmcProxyHash">部署在NEO网络上所对应的管理合约地址所对应的小端序（如管理合约地址0x69d0ba0866ee3d9abd19b06ad8ac6f49023e19b8，则小端序为b8193e02496facd86ab019bd9a3dee6608bad069）</param>
+        /// <param name="ccmcProxyHash">The little-endian corresponding to the management contract address deployed on the NEO network (e.g., if the management contract address is 0x69d0ba0866ee3d9abd19b06ad8ac6f49023e19b8, then the little-endian is b8193e02496facd86ab019bd9a3dee6608bad069)</param>
         /// <returns></returns>
         [DisplayName("setManagerProxy")]
         public static bool SetManagerProxy(byte[] ccmcProxyHash)
@@ -67,11 +68,12 @@ namespace HelloPoly
             return true;
         }
 
+
         /// <summary>
-        /// 绑定部署在目标链上所对应的应用合约地址
+        /// Bind the address of the application contract deployed on the target chain
         /// </summary>
-        /// <param name="toChainId">目标链在Poly网络中所对应的链ID</param>
-        /// <param name="toProxyHash">部署在目标链上所对应的应用合约地址</param>
+        /// <param name="toChainId">The chain ID corresponding to the target chain in the Poly network</param>
+        /// <param name="toProxyHash">The address of the application contract deployed on the target chain</param>
         /// <returns></returns>
         [DisplayName("bindProxyHash")]
         public static bool BindProxyHash(BigInteger toChainId, byte[] toProxyHash)
@@ -85,46 +87,47 @@ namespace HelloPoly
 
 
         /// <summary>
-        /// 此方法用于对其它目标链进行跨链调用（此方法可自行定义）
+        /// This method is used to make cross-chain calls to other target chains (this method can be defined by users)
         /// </summary>
-        /// <param name="toChainId">目标链在Poly网络中所对应的链ID</param>
-        /// <param name="msg">目标链应用合约所需要传递的跨链信息</param>
+        /// <param name="toChainId">The chain ID corresponding to the target chain in the Poly network</param>
+        /// <param name="method">Application contract method name of the target chain</param>
+        /// <param name="msg">Cross-chain information that needs to be passed by the target chain application contract</param>
         /// <returns></returns>
        [DisplayName("say")]
-        public static bool Say(BigInteger toChainId, byte[] msg)
+        public static bool Say(BigInteger toChainId,string method, byte[] msg)
         {
-            // 获取目标链上的应用合约
+            // Get the application contract on the target chain
             var toProxyHash = HelloPoly.GetProxyHash(toChainId);
 			
-            // 获取CCMC合约地址
+            // Get CCMC contract address
             var ccmcScriptHash = HelloPoly.GetProxyHash(neoChainID);
 			
-            // 跨链调用
-            bool success = (bool)((DynCall)ccmcScriptHash.ToDelegate())("CrossChain", new object[] { toChainId, toProxyHash, "hear", msg });
+            // Cross-chain calls
+            bool success = (bool)((DynCall)ccmcScriptHash.ToDelegate())("CrossChain", new object[] { toChainId, toProxyHash, method, msg });
             
 	    HelloPoly.Notify(success, "[HelloPoly]-Say: Failed to call CCMC.");
 			
-            // 事件通知
+            // Event Notification
             HelloPoly.SayEvent(toChainId, toProxyHash);
             return true;
         }
 
 
         /// <summary>
-        /// 此方法用于对其它目标链进行跨链调用（此方法可自行定义）
+        /// This method is used to make cross-chain calls to other target chains (this method can be defined by users)
         /// </summary>
-        /// <param name="fromChainId">源链在Poly网络中所对应的链ID</param>
-        /// <param name="toChainId">目标链在Poly网络中所对应的链ID</param>
-        /// <param name="msg">接收到源链发送的跨链信息</param>
-        /// <param name="callingScriptHash">回调脚本哈希</param>
+        /// <param name="fromChainId">The chain ID corresponding to the source chain in the Poly network</param>
+        /// <param name="toChainId">The chain ID corresponding to the target chain in the Poly network</param>
+        /// <param name="msg">Receive cross-chain messages from the source chain</param>
+        /// <param name="callingScriptHash">Callback script hash</param>
         /// <returns></returns>
         [DisplayName("hear")]
         public static bool Hear(byte[] inputBytes, byte[] fromProxyContract, BigInteger fromChainId, byte[] callingScriptHash)
         {
-            // 写入账本
+            // input the ledger information
             Storage.Put(fromProxyContract, inputBytes);
 			
-            // 事件通知
+            // Event Notification
             HearEvent(fromChainId, fromProxyContract, inputBytes);
 			
             return true;
@@ -132,9 +135,9 @@ namespace HelloPoly
 
 
         /// <summary>
-        /// 获取已经绑定的目标链所对应的应用合约地址
+        /// Get the address of the application contract corresponding to the bound target chain
         /// </summary>
-        /// <param name="toChainId">目标链在Poly网络中所对应的链ID</param>
+        /// <param name="toChainId">The chain ID corresponding to the target chain in the Poly network</param>
         /// <returns></returns>
         [DisplayName("getProxyHash")]
         public static byte[] GetProxyHash(BigInteger toChainId)
@@ -142,11 +145,12 @@ namespace HelloPoly
             return Storage.Get(ProxyHashPrefix.Concat(toChainId.ToByteArray()));
         }
 
+
         /// <summary>
-        /// 信息通知
+        /// Information Notification
         /// </summary>
-        /// <param name="condition">是否信息通知</param>
-        /// <param name="msg">通知消息</param>
+        /// <param name="condition">Whether send information notification</param>
+        /// <param name="msg">Notification Message</param>
         private static void Notify(bool condition, string msg)
         {
             if (!condition)

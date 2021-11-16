@@ -1,4 +1,4 @@
-pragma solidity ^0.4.4;
+pragma solidity ^0.6.10;
 
 import "./IEthCrossChainManager.sol";
 import "./IEthCrossChainManagerProxy.sol";
@@ -29,7 +29,6 @@ contract HelloPoly {
     /**
      * @dev Set up the management contract
      * @param _managerProxyContract The address of the source chain's management contract
-     * @return 
      **/
     function setManagerProxy(address _managerProxyContract) public {
         managerProxyContract = _managerProxyContract;
@@ -77,7 +76,7 @@ contract HelloPoly {
      * @param _toChainId The target chain's chainID
      * @return bool
      **/
-    function hear(bytes _somethingWoW, bytes _fromContractAddr, uint64 _toChainId) public returns (bool){
+    function hear(bytes memory _somethingWoW, bytes memory _fromContractAddr, uint64 _toChainId) public returns (bool){
         hearSomeThing = _somethingWoW;
         emit Hear(_somethingWoW, _fromContractAddr);
         return true;

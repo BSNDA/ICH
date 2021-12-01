@@ -52,3 +52,11 @@ type FiscoBcosOutput struct {
 	Status bool   `json:"status,omitempty"`
 	TxHash string `json:"tx_hash,omitempty"`
 }
+
+type EndpointInfo struct {
+	DestSubChainID  string `json:"dest_sub_chain_id"`
+	DestChainID     string `json:"dest_chain_id"`
+	DestChainType   string `json:"dest_chain_type"`
+	EndpointAddress string `json:"endpoint_address"`
+	EndpointType    string `json:"endpoint_type"`
+}

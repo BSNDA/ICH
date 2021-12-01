@@ -1,4 +1,4 @@
-pragma solidity ^0.6.10;
+pragma solidity ^0.4.25;
 
 import "./IEthCrossChainManager.sol";
 import "./IEthCrossChainManagerProxy.sol";

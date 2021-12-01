@@ -1,4 +1,4 @@
-pragma solidity ^0.6.10;
+pragma solidity ^0.4.25;
 
 /**
  * @dev Interface of the EthCrossChainManagerProxy for business contract like LockProxy to obtain the reliable EthCrossChainManager contract hash.

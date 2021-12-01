@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/BSNDA/ICH/sample/polychain/fabric-contract/testnet/hellopoly"
 	"fmt"
-	"github.com/hyperledger/fabric/core/chaincode/shim"
+	"github.com/BSNDA/ICH/sample/polychain/fabric-contract/testnet/hellopoly"
+	"github.com/hyperledger/fabric-chaincode-go/shim"
 )
 
 func main() {
